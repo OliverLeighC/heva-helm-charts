@@ -37,10 +37,12 @@ data:
           <name>javax.jdo.option.ConnectionUserName</name>
           <value>{{- .Values.connections.database.username }}</value>
         </property>
+        {{- if .Values.connections.database.password }}
         <property>
           <name>javax.jdo.option.ConnectionPassword</name>
           <value>{{- .Values.connections.database.password }}</value>
         </property>
+        {{- end }}
         <property>
           <name>datanucleus.autoCreateSchema</name>
           <value>false</value>

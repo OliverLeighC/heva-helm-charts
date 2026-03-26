@@ -131,6 +131,48 @@ It is possible to provide database password from a secret by using `extraEnvVars
 </property>
 ```
 
+If you need to avoid storing the password as plain text inside the hive-config.yaml, you can use a secure keystore file instead:
+
+1. mount your jceks file using extraVolumes/extraVolumeMounts
+2. add the following under `conf.hiveSite`
+
+```yaml
+hadoop.security.credential.provider.path: jceks://file/<mount_path>/<filename>.jceks
+```
+
+Optionally you can use `extraInitContainers` and a shared emptyDir volume to generate the jceks file from a secret
+
+```yaml
+extraInitContainers: |-
+  - name: keystore-init
+    command: ["/bin/sh", "-c"]
+    args:
+      - hadoop credential create javax.jdo.option.ConnectionPassword
+        -value ${DATABASE_PASSWORD}
+        -provider jceks://file/secrets/hive.jceks
+    securityContext:
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+    volumeMounts:
+      - name: secrets-volume
+        mountPath: /secrets
+    envFrom:
+      - secretRef:
+        name: "" # secret where DATABASE_PASSWORD is stored
+
+extraVolumes: |-
+  - name: secrets-volume
+    emptyDir: {}
+
+extraVolumeMounts: |-
+  - name: secrets-volume
+    mountPath: /secrets
+
+conf:
+  hiveSite:
+    hadoop.security.credential.provider.path: jceks://file/secrets/hive.jceks
+```
+
 ## Parameters
 
 ### Common parameters

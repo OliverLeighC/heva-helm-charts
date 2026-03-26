@@ -28,6 +28,10 @@ spec:
       serviceAccountName: {{ include "hive-metastore.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.extraInitContainers }}
+      initContainers:
+      {{- tpl .Values.extraInitContainers .context | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
