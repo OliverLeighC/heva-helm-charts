@@ -127,6 +127,22 @@ extraVolumeMounts: []
 ## @param extraVolumes Optionally specify extra list of additional volumes for Hive pods
 extraVolumes: []
 
+## @param extraInitContainers Optionally specify extra list of init containers for Hive pods
+extraInitContainers: []
+
+## @section init schema job configuration
+initSchemaJob:
+  ## @param initSchemaJob.enabled Enable db init schema job
+  enabled: true
+  ## @param initSchemaJob.restartPolicy Set restart policy of the job
+  restartPolicy: Never
+  ## @param initSchemaJob.backoffLimit Set backoff limit of the job
+  backoffLimit: 3
+  ## @param initSchemaJob.extraInitContainers Optionally specify extra list of init containers for the job
+  extraInitContainers: []
+  ## @param initSchemaJob.extraVolumes Optionally specify extra list of additional volumes for the job
+  extraVolumes: []
+
 ## @section Hive Parameters
 
 # Define hive connections to other services
