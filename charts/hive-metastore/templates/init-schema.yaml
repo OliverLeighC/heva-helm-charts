@@ -3,9 +3,19 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "hive-metastore.fullname" . }}-db-init-schema
+  {{- if .Values.initSchemaJob.podAnnotations }}
+  {{- with .Values.initSchemaJob.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
 spec:
   template:
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if .Values.initSchemaJob.extraInitContainers }}
       initContainers:
         {{- tpl .Values.initSchemaJob.extraInitContainers .context | nindent 8}}
